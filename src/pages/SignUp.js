@@ -21,10 +21,10 @@ const Container = styled.div`
   flex-shrink: 0;
 `;
 const SignUpText = styled.div`
-  font-family: "yg-jalnan", sans-serif;
+  font-family: "Jalnan", sans-serif;
   color: #ff975b;
-  font-size: 30px;
-  margin-top: 50px;
+  font-size: 27px;
+  margin-top: 65px;
 `;
 
 const MailInput = styled.input`
@@ -37,6 +37,7 @@ const MailInput = styled.input`
   border: 1px solid #8a8a8a;
   background: #fff;
   margin-top: 140px;
+  font-weight: 600;
 `;
 
 function SignUp() {
