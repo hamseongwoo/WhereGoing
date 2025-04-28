@@ -28,16 +28,22 @@ const SignUpText = styled.div`
 `;
 
 const MailInput = styled.input`
-  width: 400px;
+  width: 365px;
   height: 42px;
   position: absolute;
   justify-content: center;
   flex-shrink: 0;
   border-radius: 10px;
   border: 1px solid #8a8a8a;
+  color: #8B8B8B;
   background: #fff;
   margin-top: 140px;
   font-weight: 600;
+  background: url('/user.png') no-repeat 5px center;
+  background-size: 27px;
+  padding-left: 55px;
+  background-position: 15px center;;
+  background-color: #FFF;
 `;
 
 function SignUp() {

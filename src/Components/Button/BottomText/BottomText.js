@@ -9,7 +9,7 @@ const BottomText = styled.div`
   display: flex;
   gap: 5px;
   justify-content: center;
-  margin-top: 250px;
+  margin-top: 255px;
 `;
 
 function Bottom() {
