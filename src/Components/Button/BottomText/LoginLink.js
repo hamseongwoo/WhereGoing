@@ -8,4 +8,5 @@ font-family: "Pretendard-ExtraBold", sans-serif;
   font-size: 14px;
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
 `;

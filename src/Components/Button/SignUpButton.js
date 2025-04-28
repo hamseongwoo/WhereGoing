@@ -13,6 +13,7 @@ const SignUpButton = styled.button`
   font-weight: 800;
   position: absolute;
   margin-top: 200px;
+  cursor: pointer;
 `;
 
 export default SignUpButton;
