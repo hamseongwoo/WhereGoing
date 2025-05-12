@@ -5,11 +5,10 @@ import { LoginLink } from "./LoginLink";
 const BottomText = styled.div`
   width: 200px;
   height: 20px;
-  position: absolute;
   display: flex;
   gap: 5px;
   justify-content: center;
-  margin-top: 255px;
+  margin-top: -10px;
 `;
 
 function Bottom() {

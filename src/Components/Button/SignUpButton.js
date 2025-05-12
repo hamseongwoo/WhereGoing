@@ -10,9 +10,8 @@ const SignUpButton = styled.button`
   border-radius: 10px;
   border: none;
   font-size: 17px;
-  font-weight: 800;
-  position: absolute;
-  margin-top: 200px;
+  font-weight: 800; 
+  margin-top: -10px;
   cursor: pointer;
 `;
 
