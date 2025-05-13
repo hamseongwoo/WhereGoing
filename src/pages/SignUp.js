@@ -1,8 +1,20 @@
 import React, { useState } from "react";
+import { z } from "zod";
 import styled from "styled-components";
 import SignUpButton from "../Components/Button/SignUpButton";
 import Bottom from "../Components/Button/BottomText/BottomText";
 import GlobalStyle from "../styles/GlobalStyle";
+
+// 💡 Zod 스키마: 비밀번호 검증
+const passwordSchema = z
+  .object({
+    password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "비밀번호가 일치하지 않습니다",
+  });
 
 const Screen = styled.div`
   display: flex;
@@ -20,7 +32,7 @@ const Container = styled.div`
   border-radius: 20px;
   border: 1px solid #333;
   width: 560px;
-  min-height: ${(props) => (props.authCode ? "400px" : "330px")};
+  min-height: ${(props) => (props.authCode ? "420px" : "330px")};
   height: auto;
   gap: 20px;
   flex-shrink: 0;
@@ -34,21 +46,23 @@ const SignUpText = styled.div`
 `;
 
 const MailInput = styled.input`
+  font-family: "Pretendard-ExtraBold", sans-serif;
+  font-weight: 600;
   width: 365px;
   height: 42px;
-  flex-shrink: 0;
   border-radius: 10px;
-  background: #fff;
-  font-weight: 600;
   font-size: 15px;
-  background: url("/user.png") no-repeat 5px center;
-  background-size: 27px;
   padding-left: 55px;
-  background-position: 15px center;
-  background-color: #fff;
+  background: #fff url("/user.png") no-repeat 15px center;
+  background-size: 27px;
   border: ${(props) =>
     props.$isInvalid ? "1px solid #FF5959" : "1px solid #8a8a8a"};
   color: ${(props) => (props.$isInvalid ? "#FF5959" : "#8b8b8b")};
+
+  :focus {
+    border-color: #ff975b;
+    outline: none;
+  }
 `;
 
 const WrongMessage = styled.div`
@@ -56,33 +70,28 @@ const WrongMessage = styled.div`
   color: #ff5959;
   font-size: 12px;
   font-weight: 600;
-  line-height: 100%;
   margin-top: -13px;
   margin-left: -150px;
 `;
 
 const AuthCodeInput = styled.input`
   font-family: "Pretendard-ExtraBold", sans-serif;
-
+  font-weight: 600;
   width: 365px;
   height: 42px;
-  top: 30px;
-  margin-top: -8px;
-  flex-shrink: 0;
   border-radius: 10px;
-  background: #fff;
-  font-weight: 1000;
-  font-size: 15px;
-  background: url("/user.png") no-repeat 5px center;
-  background-size: 27px;
   padding-left: 55px;
-  background-position: 15px center;
-  background-color: #fff;
-  color: ${(props) => (props.$isInvalid ? "#FF5959" : "#8b8b8b")};
-
-  /* 조건부 outline 색상 */
+  background: #fff url("/user.png") no-repeat 15px center;
+  background-size: 27px;
   border: ${(props) =>
     props.$isInvalid ? "1px solid #FF5959" : "1px solid #8a8a8a"};
+  color: ${(props) => (props.$isInvalid ? "#FF5959" : "#8b8b8b")};
+  margin-top: -10px;
+
+  :focus {
+    border-color: #ff975b;
+    outline: none;
+  }
 
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -95,45 +104,45 @@ const AuthCodeInput = styled.input`
 `;
 
 const ResendButton = styled.button`
-  font-family: "Pretendard-ExtraBold", sans-serif;
+  position: absolute;
+  margin-top: 40px;
+  margin-left: 335px;
   min-width: 60px;
-  width: auto;
   height: 23px;
   background-color: #ffffff;
   color: #000000;
   border: 1px solid #8a8a8a;
   border-radius: 7px;
-  font-style: normal;
   font-weight: 600;
-  line-height: normal;
   cursor: pointer;
-  position: absolute;
-  margin-top: 40px;
-  margin-left: 335px;
 `;
 
 function SignUp() {
   const [email, setEmail] = useState("@gsm.hs.kr");
-  const [authNumber, setAuthNumber] = useState(""); // 인증번호 상태 초기화
+  const [authNumber, setAuthNumber] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
   const [authCode, setAuthCode] = useState(false);
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [onClick, setOnClick] = useState(false);
 
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const handleInputChange = (e) => {
-    const userInput = e.target.value.replace(/@gsm\.hs\.kr$/, ""); // 도메인 제거
-    const limitedInput = userInput.slice(0, 6); // 입력값을 6글자로 제한
-    setEmail(`${limitedInput}@gsm.hs.kr`); // 제한된 입력값에 도메인 추가
+    const userInput = e.target.value.replace(/@gsm\.hs\.kr$/, "");
+    const limitedInput = userInput.slice(0, 6);
+    setEmail(`${limitedInput}@gsm.hs.kr`);
   };
 
   const handleInputClick = (e) => {
-    const domainStartIndex = email.indexOf("@gsm.hs.kr"); // 도메인의 시작 위치 계산
-    e.target.setSelectionRange(domainStartIndex, domainStartIndex); // 커서를 도메인 앞에 위치
+    const domainStartIndex = email.indexOf("@gsm.hs.kr");
+    e.target.setSelectionRange(domainStartIndex, domainStartIndex);
   };
 
   const handleKeyUp = (e) => {
     const domainStartIndex = email.indexOf("@gsm.hs.kr");
     if (e.target.selectionStart >= domainStartIndex) {
-      // 커서가 @gsm.hs.kr 뒤로 넘어가면 강제로 앞에 위치
       e.target.setSelectionRange(domainStartIndex, domainStartIndex);
     }
   };
@@ -141,21 +150,38 @@ function SignUp() {
   const handleAuthCodeChange = (e) => {
     const input = e.target.value;
     if (input.length <= 6) {
-      setAuthNumber(input); // 입력값이 6글자 이하일 때만 상태 업데이트
+      setAuthNumber(input);
     }
   };
 
-  const onClickButton = () => {
-    if (email.length < 16) {
-      setIsInvalid(true);
-    } else {
-      setIsInvalid(false);
-      setAuthCode(true); // 인증번호 입력 필드 표시
-    }
-  };
   const onClickResendButton = () => {
     setOnClick(true);
-  }
+  };
+
+  const onClickButton = () => {
+    if (!authCode) {
+      // 1단계: 이메일 인증 요청
+      if (email.length < 16) {
+        setIsInvalid(true);
+      } else {
+        setIsInvalid(false);
+        setAuthCode(true); // 인증번호 입력으로 전환
+      }
+    } else if (!showPasswordInput && authNumber.length === 6) { 
+      // 2단계: 인증 완료 → 비밀번호 설정 폼 열기
+      setShowPasswordInput(true);
+    } else {
+      // 3단계: 비밀번호 설정 → Zod로 유효성 검사
+      const result = passwordSchema.safeParse({ password, confirmPassword });
+      if (!result.success) {
+        setPasswordError(result.error.errors[0].message);
+      } else {
+        setPasswordError("");
+        console.log("🎉 회원가입 완료!", result.data);
+        // TODO: 서버 요청 or 다음 단계 처리
+      }
+    }
+  };
 
   return (
     <>
@@ -163,14 +189,16 @@ function SignUp() {
       <Screen>
         <Container authCode={authCode}>
           <SignUpText>회원가입</SignUpText>
+
+          {/* 이메일 입력 */}
           <MailInput
             type="text"
             value={email}
             onChange={handleInputChange}
-            onClick={handleInputClick} // 클릭 시 커서 이동
-            onKeyUp={handleKeyUp} // 키 입력 시 커서 제어
-            $isInvalid={isInvalid} // 유효성 상태 전달
-            maxLength={16} // 최대 길이 설정
+            onClick={handleInputClick}
+            onKeyUp={handleKeyUp}
+            $isInvalid={isInvalid}
+            maxLength={16}
           />
           {isInvalid && (
             <WrongMessage>
@@ -178,20 +206,52 @@ function SignUp() {
             </WrongMessage>
           )}
 
-          {authCode && (
+          {/* 인증번호 입력 */}
+          {authCode && !showPasswordInput && (
             <>
               <AuthCodeInput
                 type="number"
                 value={authNumber}
-                onChange={handleAuthCodeChange} // 입력값 제어
+                onChange={handleAuthCodeChange}
                 placeholder="인증번호"
-                maxLength={6} // 추가적으로 maxLength 설정
+                maxLength={6}
               />
-              <ResendButton onClick={onClickResendButton}>{onClick?"발송완료":"재발송"}</ResendButton>
+              <ResendButton onClick={onClickResendButton}>
+                {onClick ? "발송완료" : "재발송"}
+              </ResendButton>
             </>
           )}
 
-          <SignUpButton onClick={onClickButton}>인증요청</SignUpButton>
+          {/* 비밀번호 입력 */}
+          {showPasswordInput && (
+            <>
+              <MailInput
+                type="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                $isInvalid={!!passwordError}
+              />
+              <MailInput
+                type="password"
+                placeholder="비밀번호 확인"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                $isInvalid={!!passwordError}
+              />
+              {passwordError && <WrongMessage>{passwordError}</WrongMessage>}
+            </>
+          )}
+
+          {/* 버튼 (인증요청 / 인증완료 / 회원가입 완료) */}
+          <SignUpButton onClick={onClickButton}>
+            {showPasswordInput
+              ? "회원가입 완료"
+              : authCode
+              ? "인증완료"
+              : "인증요청"}
+          </SignUpButton>
+
           <Bottom />
         </Container>
       </Screen>
