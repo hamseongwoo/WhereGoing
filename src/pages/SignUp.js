@@ -96,7 +96,8 @@ const AuthCodeInput = styled.input`
 
 const ResendButton = styled.button`
   font-family: "Pretendard-ExtraBold", sans-serif;
-  width: 60px;
+  min-width: 60px;
+  width: auto;
   height: 23px;
   background-color: #ffffff;
   color: #000000;
@@ -116,6 +117,7 @@ function SignUp() {
   const [authNumber, setAuthNumber] = useState(""); // 인증번호 상태 초기화
   const [isInvalid, setIsInvalid] = useState(false);
   const [authCode, setAuthCode] = useState(false);
+  const [onClick, setOnClick] = useState(false);
 
   const handleInputChange = (e) => {
     const userInput = e.target.value.replace(/@gsm\.hs\.kr$/, ""); // 도메인 제거
@@ -151,6 +153,9 @@ function SignUp() {
       setAuthCode(true); // 인증번호 입력 필드 표시
     }
   };
+  const onClickResendButton = () => {
+    setOnClick(true);
+  }
 
   return (
     <>
@@ -182,7 +187,7 @@ function SignUp() {
                 placeholder="인증번호"
                 maxLength={6} // 추가적으로 maxLength 설정
               />
-              <ResendButton>재발송</ResendButton>
+              <ResendButton onClick={onClickResendButton}>{onClick?"발송완료":"재발송"}</ResendButton>
             </>
           )}
 
